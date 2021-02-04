@@ -5,7 +5,6 @@ require('module').Module._initPaths();
 const path = require('path');
 
 const AssetsPlugin = require('assets-webpack-plugin');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const _ = require('lodash');
 
 const {
@@ -15,7 +14,7 @@ const {
 } = process.env;
 const IS_DEVELOPMENT = NODE_ENV !== 'production';
 
-const PUBLIC_PATH = '/';
+const PUBLIC_PATH = './';
 
 const NODE_PATH = path.resolve(NODE_PATH_CLI);
 const PROJECT_ROOT = path.resolve(PROJECT_ROOT_CLI);
@@ -113,6 +112,23 @@ module.exports = {
             {
                 test: /\.tsx?$/,
                 use: [
+                    {
+                        loader: 'awesome-typescript-loader',
+                        options: {
+                            useCache: true,
+                            reportFiles: [
+                                '(app|common)/**/*.{ts,tsx}',
+                            ],
+                        },
+                    },
+                ],
+            },
+            {
+                test: /worker\.ts$/,
+                use: [
+                    {
+                        loader: 'worker-loader',
+                    },
                     {
                         loader: 'awesome-typescript-loader',
                         options: {
