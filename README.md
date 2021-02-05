@@ -4,6 +4,6 @@
 
 ### `yarn build`
 
-Builds the app to the `client_build` folder.
+Builds the app to the `build_client` folder.
 
 App can be started by opening `index.html` in browser.
