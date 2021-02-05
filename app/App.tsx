@@ -20,7 +20,7 @@ class App extends PureComponent {
         return (
             <div>
                 <header>
-                    Template app
+                    Template
                 </header>
             </div>
         );

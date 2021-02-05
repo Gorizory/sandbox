@@ -5,14 +5,13 @@ require('module').Module._initPaths();
 const path = require('path');
 
 const AssetsPlugin = require('assets-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 const _ = require('lodash');
 
 const {
-    NODE_ENV,
     NODE_PATH: NODE_PATH_CLI = './',
     PROJECT_ROOT: PROJECT_ROOT_CLI = './',
 } = process.env;
-const IS_DEVELOPMENT = NODE_ENV !== 'production';
 
 const PUBLIC_PATH = './';
 
@@ -22,26 +21,14 @@ const PROJECT_ROOT = path.resolve(PROJECT_ROOT_CLI);
 const OUTPUT_PATH = path.join(NODE_PATH, 'build_client');
 const APP_ROOT = path.join(PROJECT_ROOT, 'app');
 
-const HASH_REGEXP = /[0-9a-f]{20}/;
-
 const APP_ENTRY_PATH = './index.tsx';
 
 function buildAssetName(ext, isBundle) {
     if (isBundle) {
-        return IS_DEVELOPMENT
-            ? `[name].bundle.${ext}`
-            : `[id].bundle.[chunkhash].${ext}`;
+        return `[name].bundle.${ext}`
     }
 
-    return IS_DEVELOPMENT
-        ? `[name].chunk.${ext}`
-        : `[id].chunk.[chunkhash].${ext}`;
-}
-
-function buildAssetNameWithPath() {
-    return IS_DEVELOPMENT
-        ? '[path][name].[ext]'
-        : '[hash].[ext]';
+    return `[name].chunk.${ext}`
 }
 
 module.exports = {
@@ -53,7 +40,7 @@ module.exports = {
         children: false,
     },
     context: APP_ROOT,
-    mode: NODE_ENV,
+    mode: 'development',
     entry: {
         app: APP_ENTRY_PATH,
     },
@@ -92,6 +79,9 @@ module.exports = {
         noEmitOnErrors: true,
     },
     plugins: [
+        new HtmlWebpackPlugin({
+            template: '../public/index.html',
+        }),
         new AssetsPlugin({
             filename: 'assets.json',
             prettyPrint: true,
@@ -110,25 +100,28 @@ module.exports = {
     module: {
         rules: [
             {
-                test: /\.tsx?$/,
+                test: /worker\.ts$/,
                 use: [
+                    {
+                        loader: 'worker-loader',
+                        options: {
+                            inline: 'fallback',
+                        },
+                    },
                     {
                         loader: 'awesome-typescript-loader',
                         options: {
                             useCache: true,
                             reportFiles: [
-                                '(app|common)/**/*.{ts,tsx}',
+                                '(app)/**/*.ts',
                             ],
                         },
                     },
                 ],
             },
             {
-                test: /worker\.ts$/,
+                test: /\.tsx?$/,
                 use: [
-                    {
-                        loader: 'worker-loader',
-                    },
                     {
                         loader: 'awesome-typescript-loader',
                         options: {
