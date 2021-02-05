@@ -108,15 +108,6 @@ module.exports = {
                             inline: 'fallback',
                         },
                     },
-                    {
-                        loader: 'awesome-typescript-loader',
-                        options: {
-                            useCache: true,
-                            reportFiles: [
-                                '(app)/**/*.ts',
-                            ],
-                        },
-                    },
                 ],
             },
             {
